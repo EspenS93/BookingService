@@ -1,0 +1,110 @@
+﻿@page "/rooms/new"
+@page "/rooms/{RoomId:int?}"
+@using BookingService.Core.Entities.Room
+@inject BookingApiClient BookingApi
+@inject NavigationManager NavigationManager;
+<PageTitle>New room</PageTitle>
+
+<h3>Add a new room</h3>
+@if(Model != null){
+    <EditForm Model="Model" OnValidSubmit="Submit" FormName="create" Enhance>
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+    
+        <InputNumber hidden class="form-control" @bind-Value="Model!.Id" />
+
+        <div class="form-group">
+            <label>Name:</label>
+            <InputText class="form-control" @bind-Value="Model!.Name" />
+        </div>
+
+        <div class="form-group">
+            <label>Description:</label>
+            <InputTextArea class="form-control" @bind-Value="Model!.Description"></InputTextArea>
+        </div>
+
+        <div class="form-group">
+            <label>Available:</label>
+            <InputCheckbox class="form-control" @bind-Value="Model!.IsAvailable" />
+        </div>
+
+        <div class="form-group">
+            <label>Room Number:</label>
+            <InputNumber class="form-control" @bind-Value="Model!.Number" />
+        </div>
+
+        <div class="form-group">
+            <label>Floor:</label>
+            <InputNumber class="form-control" @bind-Value="Model!.Floor" />
+        </div>
+
+        <div class="form-group">
+            <label>Beds:</label>
+            <InputNumber class="form-control" @bind-Value="Model!.Beds" />
+        </div>
+
+        <div class="form-group">
+            <label>Max Adults:</label>
+            <InputNumber class="form-control" @bind-Value="Model!.MaxAdults" />
+        </div>
+
+        <div class="form-group">
+            <label>Max Children:</label>
+            <InputNumber class="form-control" @bind-Value="Model!.MaxChildren" />
+        </div>
+
+        <div class="form-group">
+            <label>Max Infants:</label>
+            <InputNumber class="form-control" @bind-Value="Model!.MaxInfants" />
+        </div>
+
+        <div class="form-group">
+            <label>Max Total Occupants:</label>
+            <InputNumber class="form-control" @bind-Value="Model!.MaxTotalOccupants" />
+        </div>
+
+        <div class="form-group">
+            <label>Base Price</label>
+            <InputNumber class="form-control" @bind-Value="Model!.BasePrice" />
+        </div>
+
+        <!-- Add more fields as needed using similar approach -->
+
+        <button type="submit" class="btn btn-primary">@(IsNew ? "Create Room" : "Save Changes")</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int? RoomId { get; set; }
+    [SupplyParameterFromForm]
+    private RoomDetail? Model { get; set; }
+    private bool IsNew => RoomId == null;
+
+    private async Task Submit() {
+        Model!.Facilities = new();
+        Model!.Pictures = new();
+        Model!.Features = new();
+        if(Model!.Id == 0) {
+            var newRoomModel = new RoomDetail() { Name = Model.Name, Description = Model.Description, BasePrice = Model.BasePrice };
+            Model = await BookingApi.AddRoomAsync(newRoomModel);
+        } else {
+            await BookingApi.UpdateRoomAsync(Model);
+        }
+        NavigationManager.NavigateTo($"/rooms#room-{Model.Id}");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(Model == null){
+            if (!IsNew)
+            {
+                Model = await BookingApi.GetRoomAsync(RoomId!.Value);
+            }
+            else
+            {
+                Model = new();
+            }
+        }
+    }
+}

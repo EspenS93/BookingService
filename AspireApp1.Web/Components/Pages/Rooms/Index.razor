@@ -1,0 +1,61 @@
+﻿@page "/rooms"
+@using BookingService.Core.Entities.Room
+@inject BookingApiClient BookingApi
+@inject NavigationManager NavigationManager;
+
+<PageTitle>Rooms</PageTitle>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Floor</th>
+            <th>Number</th>
+            <th>Beds</th>
+            <th>Available</th>
+            <th>Max Adults</th>
+            <th>Max Children</th>
+            <th>Max Infants</th>
+            <th>Max TotalOccupants</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (rooms != null)
+        {
+            @foreach (var room in rooms)
+            {
+                <tr id="room-@room.Id">
+                    <td>@room.Name</td>
+                    <td>@room.BasePrice</td>
+                    <td>@room.Floor</td>
+                    <td>@room.Number</td>
+                    <td>@room.Beds</td>
+                    <td>@room.IsAvailable</td>
+                    <td>@room.MaxAdults</td>
+                    <td>@room.MaxChildren</td>
+                    <td>@room.MaxInfants</td>
+                    <td>@room.MaxTotalOccupants</td>
+                    <td><a href="/rooms/@room.Id">Edit</a></td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@if (rooms == null)
+{
+    <p><em>Loading...</em></p>
+}
+
+@code {
+    private RoomDetail[]? rooms;
+
+    protected override async Task OnInitializedAsync()
+    {
+        rooms = await BookingApi.GetRoomsAsync(100);
+    }
+
+    private void EditRoom(int id) => NavigationManager.NavigateTo($"/rooms/{id}");
+}
