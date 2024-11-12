@@ -82,9 +82,9 @@
     private bool IsNew => RoomId == null;
 
     private async Task Submit() {
-        Model!.Facilities = new();
-        Model!.Pictures = new();
-        Model!.Features = new();
+        Model!.Facilities = [];
+        Model!.Pictures = [];
+        Model!.Features = [];
         if(Model!.Id == 0) {
             var newRoomModel = new RoomDetail() { Name = Model.Name, Description = Model.Description, BasePrice = Model.BasePrice };
             Model = await BookingApi.AddRoomAsync(newRoomModel);

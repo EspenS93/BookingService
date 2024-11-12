@@ -8,7 +8,7 @@ var bookingServicePostgres = builder.AddPostgres("postgres")
     .WithDataVolume()
     .AddDatabase("BookingServicePostgres");
 
-var migrationService = builder.AddProject<BookingService_DatabaseMigration>("database-migration")
+builder.AddProject<BookingService_DatabaseMigration>("database-migration")
     .WithReference(bookingServicePostgres);
 
 var bookingApiService = builder.AddProject<BookingService_API>("bookingapiservice")

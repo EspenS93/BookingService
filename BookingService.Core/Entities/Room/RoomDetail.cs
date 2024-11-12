@@ -17,7 +17,7 @@ public class RoomDetail
     public int? MaxChildren { get; set; }
     public int? MaxInfants { get; set; }
     public int MaxTotalOccupants { get; set; }
-    public List<RoomFacility>? Facilities { get; set; }
-    public List<RoomFeature>? Features { get; set; }
-    public List<Picture>? Pictures { get; set; }
+    public ICollection<RoomFacility> Facilities { get; set; } = [];
+    public ICollection<RoomFeature> Features { get; set; } = [];
+    public ICollection<Picture> Pictures { get; set; } = [];
 }
